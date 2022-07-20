@@ -20,7 +20,7 @@ class Account {
         return balance;
     }
     // 인출 성공 시 true, 실패 시 false
-    public boolean withdraw(int money){
+    public synchronized boolean withdraw(int money){
         //** 예외가 발생했을 때 다른 스레드 실행
         //** 학습을 위해서 일부러 오작동 실행
         try {Thread.sleep(1000);} catch (Exception error) {}
@@ -44,7 +44,7 @@ class ThreadTask3 implements Runnable {
         while (account.getBalance() > 0) {
             // 0~0.9999...의 랜덤수 발생
             int money = (int) (Math.random() * 3 + 1) * 1000;
-            // 머니만큼
+
             boolean denied = !account.withdraw(money);
 
             System.out.println(String.format("%s님께서 %d원을 인출 시도 / 잔액 : %d %s",
