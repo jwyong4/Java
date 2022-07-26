@@ -2,50 +2,50 @@ import java.util.*;
 
 public class QueuePrinter {
     public int queuePrinter(int bufferSize, int capacities, int[] documents) {
-        //결과를 담을 변수를 선언 초기화합니다.
-        int count = 0;
+        int count = 0; // 결과 담을 변수
+        Queue<Integer> queue = new LinkedList<>(); // 인쇄 환경을 담을 큐
 
-        //인쇄 환경을 담을 큐를 선언합니다. 큐는 추상 인터페이스로, LinkedList, 우선순위큐로 구현할 수 있습니다.
-        Queue<Integer> queue = new LinkedList<>();
-
-        //선언한 큐를 0으로 채워줍니다.
-        for(int i = 0; i < bufferSize; i++) {
+        for (int i = 0; i < bufferSize; i++) { // queue를 buffersize 만큼 0으로 채워줌
             queue.add(0);
         }
+        // 처음 시작시 동작
+        queue.poll(); // 작업중인 문서의 첫번째 인덱스인 0을 삭제 후,
+        queue.add(documents[0]); // 대기열의 첫번째 문서를 작업중인 문서에 넣어주고,
+        documents = Arrays.copyOfRange (documents, 1, documents.length); // 해당 문서를 지움
+        count++; // 1초 증가
 
-        //첫 시작은 초기값을 빼주고, 0번 문서를 넣어줍니다. 이후 결과 1 증가
-        queue.poll();
-        queue.add(documents[0]);
-        documents = Arrays.copyOfRange(documents, 1, documents.length);//문서를 하나 지워줍니다.(배열 줄이기)
-        count++;
+        // 문서가 있거나 대기열이 있는 경우, 반복
+        while (documents.length != 0 || (queue.stream().reduce(0, Integer::sum) != 0)) {
 
-        //반복을 시작합니다. (더이상 문서가 없을 경우 && !!!!중요!!!! 대기열이 존재하지 않는 경우) -> 멈춰야 합니다.
-        while(documents.length != 0 || (queue.stream().reduce(0, Integer::sum) != 0)) {
-            if(documents.length != 0) { //대기중인 문서가 남은 경우
+            if (documents.length != 0) { // 대기열에 문서가 있고,
                 int sum = queue.stream().reduce(0, Integer::sum) + documents[0];
-                if(sum > capacities) {//작업중인 문서와, 남은 문서중 가장 처음 문서의 크기가 capacities보다 큰 경우
 
-                    queue.poll();
+                if (sum > capacities) { // 작업중인 문서 + 대기열의 첫번째 문서가 수용량보다 크다면,
+                    queue.poll(); // 문서 삭제
                     sum = queue.stream().reduce(0, Integer::sum) + documents[0];
 
-                    if(sum <= capacities) {//문서가 제거되고, 남은 대기열의 첫번째 문서를 포함했을때 수용이 가능하다면,
-                        queue.add(documents[0]);
-                        documents = Arrays.copyOfRange(documents, 1, documents.length);//문서를 하나 지워줍니다.(배열 줄이기)
-                        count++;
-                    } else { //문서가 제거되고, 남은 대기열의 첫번째 문서를 포함했을때 수용이 불가능하다면, (if(sum > capacities))
-                        queue.add(0);
-                        count++;
+                    if (sum <= capacities) { // 문서 삭제 후, 작업중인 문서 + 대기열의 첫번째 문서를 수용할 수 있다면,
+                        queue.add(documents[0]); // 대기열의 첫번째 문서를 작업중인 문서에 넣어주고,
+                        documents = Arrays.copyOfRange (documents, 1, documents.length); // 해당 문서를 지움
+                        count++; // 1초 증가
                     }
-                } else { //작업중인 문서와, 남은 문서중 가장 처음 문서의 크기가 capacities보다 작은 경우
-                    queue.poll();
-                    queue.add(documents[0]);
-                    documents = Arrays.copyOfRange(documents, 1, documents.length);//문서를 하나 지워줍니다.(배열 줄이기)
-                    count++;
+                    else { // 문서 삭제 후, 대기열의 첫번째 문서를 포함했을때 수용이 불가하다면,
+                        queue.add(0); // 작업중인 문서의 두번째칸에 0을 넣어줌
+                        count++; // 1초 증가
+                    }
                 }
-            }else { //대기중인 문서가 없을 경우
-                queue.poll();
-                queue.add(0);
-                count++;
+
+                else { // 작업중인 문서와 대기열의 첫번째 문서의 크기가 수용량보다 작을 경우,
+                    queue.poll(); // 작업중인 문서를 삭제 후,
+                    queue.add(documents[0]); // 대기열의 첫번째 문서를 작업중인 문서에 넣어주고,
+                    documents = Arrays.copyOfRange(documents, 1, documents.length); // 해당 문서를 지움
+                    count++; // 1초 증가
+                }
+            }
+            else { // 대기열에 문서가 없을 경우
+                queue.poll(); // 작업중인 문서를 삭제 후.
+                queue.add(0); // 작업중인 문서에 0을 넣어줌
+                count++; // 1초 증가
             }
         }
         return count;
