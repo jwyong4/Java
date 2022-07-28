@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class QueuePrinter {
+public class co05_QueuePrinter {
     public int queuePrinter(int bufferSize, int capacities, int[] documents) {
         int count = 0; // 결과 담을 변수
         Queue<Integer> queue = new LinkedList<>(); // 인쇄 환경을 담을 큐

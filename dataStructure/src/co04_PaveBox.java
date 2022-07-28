@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class PaveBox {
+public class co04_PaveBox {
     public static int paveBox(Integer[] boxes) {
         Queue<Integer> queue = new LinkedList<>();
 
