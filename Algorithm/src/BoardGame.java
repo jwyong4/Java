@@ -35,6 +35,31 @@ board와 operation이 입력값의 예시 ([ [0, 0, 1], [1, 0, 1], [1, 1, 1] ], 
 import java.util.*;
 public class BoardGame {
     public Integer boardGame(int[][] board, String operation) {
+        // oper에 따라 이동할 좌표를 해쉬맵을 생성하여 만들어줌
+        HashMap<String, int[]> DIR = new HashMap<String, int[]>(){{
+           put("U", new int[]{-1, 0});
+           put("D", new int[]{1, 0});
+           put("L", new int[]{0, -1});
+           put("R", new int[]{0, 1});
+        }};
+        int LEN = board.length; // 보드의 길이 선언
+        int Y = 0; // 시작 좌표 선언
+        int X = 0;
+        int score = 0; // 점수 선언
 
+        char[] chars = operation.toCharArray(); // 입력받은 oper를 char 배열로 변환
+
+        for (int i = 0; i < chars.length; i++) { // charArray 타입 oper를 순회
+            int dY = DIR.get(String.valueOf(chars[i]))[0]; //
+            int dX = DIR.get(String.valueOf(chars[i]))[1];
+            Y += dY;
+            X += dX;
+            if (!isValid(Y, X, LEN)) return null;
+            score += board[Y][X];
+        }
+        return score;
+    }
+    public boolean isValid(int y, int x, int LEN) {
+        return 0 <= y && y < LEN && 0 <= x && x < LEN;
     }
 }
